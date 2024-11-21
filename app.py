@@ -57,7 +57,7 @@ def registrazione():
         cursor = conn.cursor()
 
         # Inserisci i dati nel database
-        query = "INSERT INTO Docenti (Nome, Cognome, Email, Password) VALUES (%s, %s, %s)"
+        query = "INSERT INTO Docenti (Nome, Cognome, Email, Password) VALUES (%s, %s, %s, %s)"
         values = (Nome, Cognome, Email, Password)
         cursor.execute(query, values)
         conn.commit()
