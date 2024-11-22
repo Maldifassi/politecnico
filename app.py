@@ -73,5 +73,46 @@ def registrazione():
     except Exception as e:
         return jsonify({'error': f'Errore generico: {str(e)}'}), 500
 
+@app.route('/prenotazione', methods=['POST'])
+def prenotazione():
+    # Ottieni i dati dal modulo di prenotazione (JSON)
+    data = request.get_json()
+
+    # Estrai i dati dal corpo della richiesta
+    ID_Aula = data.get('ID_Aula')
+    ID_Docente = data.get('ID_Docente')
+    ID_Seminario = data.get('ID_Seminario')
+    Status = data.get('Status')
+    num_Studente = data.get('num_Studente')
+
+    if not all([ID_Aula, ID_Docente, ID_Seminario, Status, num_Studenti]):
+        return jsonify({'error': 'Tutti i campi sono obbligatori!'}), 400
+
+    try:
+        # Connessione al database
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Inserisci i dati nel database
+        query = """
+            INSERT INTO Prenotazione (ID_Aula, ID_Docente, ID_Seminario, Status, num_Studente)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        values = (ID_Aula, ID_Docente, ID_Seminario, Status, num_Studente)
+        cursor.execute(query, values)
+        conn.commit()
+
+        # Chiudi il cursore e la connessione
+        cursor.close()
+        conn.close()
+
+        return jsonify({'success': 'Prenotazione registrata con successo!'}), 201
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': f'Errore nel database: {str(err)}'}), 500
+    except Exception as e:
+        return jsonify({'error': f'Errore generico: {str(e)}'}), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
